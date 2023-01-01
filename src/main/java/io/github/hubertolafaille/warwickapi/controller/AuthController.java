@@ -1,10 +1,11 @@
 package io.github.hubertolafaille.warwickapi.controller;
 
+import io.github.hubertolafaille.warwickapi.customexception.RoleEntityNotFoundException;
+import io.github.hubertolafaille.warwickapi.customexception.UserEntityAlreadyExistsException;
+import io.github.hubertolafaille.warwickapi.customexception.UserEntityNotFoundException;
 import io.github.hubertolafaille.warwickapi.dto.UserCreationRequestDTO;
 import io.github.hubertolafaille.warwickapi.dto.UserCreationResponseDTO;
 import io.github.hubertolafaille.warwickapi.service.UserService;
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,25 +28,13 @@ public class AuthController {
     }
 
     @PostMapping("/signUp")
-    public ResponseEntity<?> addUser(@RequestBody UserCreationRequestDTO userCreationRequestDTO){
-        log.info("POST /api/auth/addUser -> REQUEST : email = {}", userCreationRequestDTO.email());
-        try {
+    public ResponseEntity<UserCreationResponseDTO> addUser(@RequestBody UserCreationRequestDTO userCreationRequestDTO) throws RoleEntityNotFoundException, UserEntityNotFoundException, UserEntityAlreadyExistsException {
+        log.info("POST /api/auth/signUp -> REQUEST : email = {}", userCreationRequestDTO.email());
             ResponseEntity<UserCreationResponseDTO> responseEntity = ResponseEntity
                     .status(HttpStatus.CREATED)
                     .body(userService.addUser(userCreationRequestDTO.email(), userCreationRequestDTO.password()));
-            log.info("POST /api/auth/addUser -> CREATED : email = {}", userCreationRequestDTO.email());
+            log.info("POST /api/auth/signUp -> CREATED : email = {}", userCreationRequestDTO.email());
             return responseEntity;
-        } catch (EntityExistsException e){
-            log.error("POST /api/auth/addUser -> ERROR : {}", e.getMessage());
-            return ResponseEntity
-                    .status(HttpStatus.UNPROCESSABLE_ENTITY)
-                    .body(e.getMessage());
-        } catch (EntityNotFoundException e){
-            log.error("POST /api/auth/addUser -> ERROR : {}", e.getMessage());
-            return ResponseEntity
-                    .status(HttpStatus.NOT_FOUND)
-                    .body(e.getMessage());
-        }
     }
 
 }

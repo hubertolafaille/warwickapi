@@ -1,13 +1,14 @@
 package io.github.hubertolafaille.warwickapi.service;
 
+import io.github.hubertolafaille.warwickapi.customexception.RoleEntityNotFoundException;
+import io.github.hubertolafaille.warwickapi.customexception.UserEntityAlreadyExistsException;
+import io.github.hubertolafaille.warwickapi.customexception.UserEntityNotFoundException;
 import io.github.hubertolafaille.warwickapi.dto.UserCreationResponseDTO;
 import io.github.hubertolafaille.warwickapi.entity.RoleEntity;
 import io.github.hubertolafaille.warwickapi.entity.UserEntity;
 import io.github.hubertolafaille.warwickapi.enumeration.RoleEnum;
 import io.github.hubertolafaille.warwickapi.repository.UserRepository;
 import io.github.hubertolafaille.warwickapi.security.PasswordEncoder;
-import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +25,14 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public UserEntity findUserEntityByEmail(String email) throws EntityNotFoundException {
+    public UserEntity findUserEntityByEmail(String email) throws UserEntityNotFoundException {
         return userRepository.findUserEntityByEmail(email).orElseThrow(
-                () -> new EntityNotFoundException("Email not found : " + email));
+                () -> new UserEntityNotFoundException("Email not found : " + email));
     }
 
-    public UserCreationResponseDTO addUser(String email, String password) throws EntityExistsException, EntityNotFoundException {
+    public UserCreationResponseDTO addUser(String email, String password) throws UserEntityAlreadyExistsException, RoleEntityNotFoundException {
         if (userRepository.existsByEmail(email)){
-            throw new EntityExistsException("User already exist : " + email);
+            throw new UserEntityAlreadyExistsException("User already exist : " + email);
         }
 
         RoleEntity roleEntity = roleService.findRoleEntityByRoleEnum(RoleEnum.USER);
