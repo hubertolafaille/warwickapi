@@ -1,4 +1,4 @@
-package io.github.hubertolafaille.warwickapi.security;
+package io.github.hubertolafaille.warwickapi.service;
 
 import io.github.hubertolafaille.warwickapi.entity.RoleEntity;
 import io.github.hubertolafaille.warwickapi.entity.UserEntity;
@@ -13,11 +13,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+
+    // TODO : utiliser un service à la place du repository
 
     private final UserRepository userRepository;
 
@@ -36,7 +38,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 mapRoleEntityListToGrantedAuthorityCollection(userEntity.getRoles()));
     }
 
-    private Collection<GrantedAuthority> mapRoleEntityListToGrantedAuthorityCollection(List<RoleEntity> roleEntityList){
+    private Collection<GrantedAuthority> mapRoleEntityListToGrantedAuthorityCollection(Set<RoleEntity> roleEntityList){
         return roleEntityList.stream()
                 .map(roleEntity -> new SimpleGrantedAuthority(roleEntity.getName().name()))
                 .collect(Collectors.toList());
