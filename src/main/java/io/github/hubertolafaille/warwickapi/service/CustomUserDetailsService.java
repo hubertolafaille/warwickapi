@@ -2,8 +2,8 @@ package io.github.hubertolafaille.warwickapi.service;
 
 import io.github.hubertolafaille.warwickapi.entity.RoleEntity;
 import io.github.hubertolafaille.warwickapi.entity.UserEntity;
-import io.github.hubertolafaille.warwickapi.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.AllArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -17,28 +17,26 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 
-    // TODO : utiliser un service à la place du repository
-
-    private final UserRepository userRepository;
-
-    @Autowired
-    public CustomUserDetailsService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findUserEntityByEmail(username).orElseThrow(
-                () -> new UsernameNotFoundException("Username not found : " + username));
+        UserEntity userEntity;
+        try {
+            userEntity = userService.findUserEntityByEmail(username);
+        } catch (EntityNotFoundException e){
+            throw new UsernameNotFoundException("Username not found : " + username);
+        }
         return new User(
                 userEntity.getEmail(),
                 userEntity.getPassword(),
-                mapRoleEntityListToGrantedAuthorityCollection(userEntity.getRoles()));
+                mapRoleEntitySetToGrantedAuthorityCollection(userEntity.getRoles()));
     }
 
-    private Collection<GrantedAuthority> mapRoleEntityListToGrantedAuthorityCollection(Set<RoleEntity> roleEntityList){
+    private Collection<GrantedAuthority> mapRoleEntitySetToGrantedAuthorityCollection(Set<RoleEntity> roleEntityList){
         return roleEntityList.stream()
                 .map(roleEntity -> new SimpleGrantedAuthority(roleEntity.getName().name()))
                 .collect(Collectors.toList());
