@@ -2,12 +2,17 @@ package io.github.hubertolafaille.warwickapi.service;
 
 import io.github.hubertolafaille.warwickapi.customexception.RoleEntityNotFoundException;
 import io.github.hubertolafaille.warwickapi.customexception.UserEntityAlreadyExistsException;
-import io.github.hubertolafaille.warwickapi.dto.UserCreationResponseDTO;
+import io.github.hubertolafaille.warwickapi.dto.SignInResponseDTO;
+import io.github.hubertolafaille.warwickapi.dto.SignUpResponseDTO;
 import io.github.hubertolafaille.warwickapi.entity.RoleEntity;
 import io.github.hubertolafaille.warwickapi.entity.UserEntity;
 import io.github.hubertolafaille.warwickapi.enumeration.RoleEnum;
-import io.github.hubertolafaille.warwickapi.security.PasswordEncoder;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -21,9 +26,11 @@ public class AuthService {
 
     private final RoleService roleService;
 
-    private final PasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public UserCreationResponseDTO signUp(String email, String password) throws UserEntityAlreadyExistsException, RoleEntityNotFoundException {
+    private final AuthenticationManager authenticationManager;
+
+    public SignUpResponseDTO signUp(String email, String password) throws UserEntityAlreadyExistsException, RoleEntityNotFoundException {
         if (userService.existsByEmail(email)){
             throw new UserEntityAlreadyExistsException("User already exist : " + email);
         }
@@ -35,8 +42,14 @@ public class AuthService {
 
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail(email);
-        userEntity.setPassword(passwordEncoder.bCryptPasswordEncoder().encode(password));
+        userEntity.setPassword(bCryptPasswordEncoder.encode(password));
         userEntity.setRoles(roleEntitySet);
-        return new UserCreationResponseDTO(userService.saveSignUp(userEntity));
+        return new SignUpResponseDTO(userService.saveSignUp(userEntity));
+    }
+
+    public SignInResponseDTO signIn(String email, String password) {
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return new SignInResponseDTO(email);
     }
 }
