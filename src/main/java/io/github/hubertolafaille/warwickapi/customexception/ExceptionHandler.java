@@ -42,7 +42,7 @@ public class ExceptionHandler {
 
     private APIErrorResponseDTO generateAPIError(Exception e, String errorMessage, HttpStatus httpStatus){
         HttpServletRequest httpServletRequest = ((ServletRequestAttributes) Objects.requireNonNull(RequestContextHolder.getRequestAttributes())).getRequest();
-        log.error("{} {} -> ERROR : {}", httpServletRequest.getMethod(), httpServletRequest.getServletPath(), e.getMessage());
+        log.error("({}) : {} -> [ERROR] -> '{}' -> {}", httpServletRequest.getMethod(), httpServletRequest.getServletPath(), e.getClass().getSimpleName(), e.getMessage());
         return new APIErrorResponseDTO(httpStatus.value(),
                 httpStatus.name(),
                 httpServletRequest.getMethod(),

@@ -27,21 +27,21 @@ public class AuthController {
 
     @PostMapping("/signUp")
     public ResponseEntity<SignUpResponseDTO> signUp(@RequestBody SignUpRequestDTO signUpRequestDTO) throws RoleEntityNotFoundException, UserEntityNotFoundException, UserEntityAlreadyExistsException {
-        log.info("POST /api/auth/signUp -> REQUEST : {}", signUpRequestDTO.email());
+        log.info("(POST) : /api/auth/signUp -> [REQUEST] -> {}", signUpRequestDTO.email());
         ResponseEntity<SignUpResponseDTO> responseEntity = ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(authService.signUp(signUpRequestDTO.email(), signUpRequestDTO.password()));
-        log.info("POST /api/auth/signUp -> CREATED : {}", signUpRequestDTO.email());
+        log.info("(POST) : /api/auth/signUp -> [CREATED] -> {}", signUpRequestDTO.email());
         return responseEntity;
     }
 
     @PostMapping("/signIn")
     public ResponseEntity<SignInResponseDTO> signIn(@RequestBody SignInRequestDTO signInRequestDTO){
-        log.info("POST /api/auth/signIn -> REQUEST : {}", signInRequestDTO.email());
+        log.info("(POST) : /api/auth/signIn -> [REQUEST] -> {}", signInRequestDTO.email());
         ResponseEntity<SignInResponseDTO> responseEntity = ResponseEntity
                 .status(HttpStatus.OK)
                 .body(authService.signIn(signInRequestDTO.email(), signInRequestDTO.password()));
-        log.info("POST /api/auth/signIn -> OK : {}", signInRequestDTO.email());
+        log.info("(POST) : /api/auth/signIn -> [OK] -> {}", signInRequestDTO.email());
         return responseEntity;
     }
 
