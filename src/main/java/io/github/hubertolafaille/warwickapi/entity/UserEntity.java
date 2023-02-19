@@ -22,6 +22,7 @@ public class UserEntity {
     @NotBlank
     private String email;
 
+    @NotBlank
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
