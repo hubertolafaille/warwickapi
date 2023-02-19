@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -14,27 +15,27 @@ import java.util.Objects;
 
 @ControllerAdvice
 @Slf4j
-public class ExceptionHandler {
+public class ExceptionManager {
 
-    @org.springframework.web.bind.annotation.ExceptionHandler({RoleEntityNotFoundException.class})
+    @ExceptionHandler({RoleEntityNotFoundException.class})
     public ResponseEntity<APIErrorResponseDTO> roleEntityNotFoundException(RoleEntityNotFoundException roleEntityNotFoundException){
         HttpStatus httpStatus = HttpStatus.NOT_FOUND;
         return new ResponseEntity<>(generateAPIError(roleEntityNotFoundException, httpStatus), httpStatus);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler({UserEntityNotFoundException.class})
+    @ExceptionHandler({UserEntityNotFoundException.class})
     public ResponseEntity<APIErrorResponseDTO> userEntityNotFoundException(UserEntityNotFoundException userEntityNotFoundException){
         HttpStatus httpStatus = HttpStatus.NOT_FOUND;
         return new ResponseEntity<>(generateAPIError(userEntityNotFoundException, httpStatus), httpStatus);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler({UserEntityAlreadyExistsException.class})
+    @ExceptionHandler({UserEntityAlreadyExistsException.class})
     public ResponseEntity<APIErrorResponseDTO> userEntityAlreadyExistsException(UserEntityAlreadyExistsException userEntityAlreadyExistsException){
         HttpStatus httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
         return new ResponseEntity<>(generateAPIError(userEntityAlreadyExistsException, httpStatus), httpStatus);
     }
 
-    @org.springframework.web.bind.annotation.ExceptionHandler({Exception.class})
+    @ExceptionHandler({Exception.class})
     public ResponseEntity<APIErrorResponseDTO> exception(Exception exception){
         HttpStatus httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         return new ResponseEntity<>(generateAPIError(exception,"An unknown error has occurred", httpStatus), httpStatus);
