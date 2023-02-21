@@ -13,8 +13,8 @@ public class UserService {
     private final UserRepository userRepository;
 
     public UserEntity findUserEntityByEmail(String email) throws UserEntityNotFoundException {
-        return userRepository.findUserEntityByEmail(email).orElseThrow(
-                () -> new UserEntityNotFoundException("Email not found : " + email));
+        return userRepository.findUserEntityByEmail(email)
+                .orElseThrow(() -> new UserEntityNotFoundException("Email not found : " + email));
     }
 
     public boolean existsByEmail(String email) {

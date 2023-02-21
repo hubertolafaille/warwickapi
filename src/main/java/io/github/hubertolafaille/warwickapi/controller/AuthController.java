@@ -2,7 +2,6 @@ package io.github.hubertolafaille.warwickapi.controller;
 
 import io.github.hubertolafaille.warwickapi.customexception.RoleEntityNotFoundException;
 import io.github.hubertolafaille.warwickapi.customexception.UserEntityAlreadyExistsException;
-import io.github.hubertolafaille.warwickapi.customexception.UserEntityNotFoundException;
 import io.github.hubertolafaille.warwickapi.dto.SignInRequestDTO;
 import io.github.hubertolafaille.warwickapi.dto.SignInResponseDTO;
 import io.github.hubertolafaille.warwickapi.dto.SignUpRequestDTO;
@@ -26,7 +25,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/signUp")
-    public ResponseEntity<SignUpResponseDTO> signUp(@RequestBody SignUpRequestDTO signUpRequestDTO) throws RoleEntityNotFoundException, UserEntityNotFoundException, UserEntityAlreadyExistsException {
+    public ResponseEntity<SignUpResponseDTO> signUp(@RequestBody SignUpRequestDTO signUpRequestDTO) throws RoleEntityNotFoundException, UserEntityAlreadyExistsException {
         log.info("(POST) : /api/auth/signUp -> [REQUEST] -> {}", signUpRequestDTO.email());
         ResponseEntity<SignUpResponseDTO> responseEntity = ResponseEntity
                 .status(HttpStatus.CREATED)
